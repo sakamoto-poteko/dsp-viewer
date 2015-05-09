@@ -1,0 +1,8 @@
+build/
+debug/
+release/
+*.opensdf
+*.pro.*
+*.sdf
+*.suo
+*.user

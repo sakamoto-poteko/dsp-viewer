@@ -1,20 +1,22 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2015-05-08T10:30:21
-#
-#-------------------------------------------------
+QT += gui core widgets
 
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = demo
 TEMPLATE = app
+TARGET = demo
 
+# Input
+HEADERS += FFTCalculator.h \
+           FFTScaleDraw.h \
+           shared_Ipp_ptr.h \
+           TransposedMatrixRasterData.h \
+           wave.h \
+           FFTSpectrumWidget.h
+    
+SOURCES += FFTCalculator.cpp \
+           FFTScaleDraw.cpp \
+           main.cpp \
+           wave.cpp \
+           FFTSpectrumWidget.cpp
+           
+INCLUDEPATH += D:\Projects\Tools\qwt-6.1.2\include
+QMAKE_LIBDIR += D:\Projects\Tools\qwt-6.1.2\lib
 
-SOURCES += main.cpp\
-        mainwindow.cpp
-
-HEADERS  += mainwindow.h
-
-FORMS    += mainwindow.ui

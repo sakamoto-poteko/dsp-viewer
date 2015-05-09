@@ -33,11 +33,13 @@ template <typename T>
 class shared_Ipp_ptr : public std::shared_ptr<T>
 {
 public:
-    shared_Ipp_ptr(T *ptr) :
-        std::shared_ptr<T>(ptr, [=](T *dPtr){ippFree(dPtr);})
+    shared_Ipp_ptr(size_t size = 0) :
+        std::shared_ptr<T>(size ? (T *)_mm_malloc(size * sizeof(T), 64) : 0, 
+        [](T *dPtr){
+            if (dPtr) { _mm_free(dPtr); dPtr = 0; }
+        })
     {
     }
-
 };
 
 

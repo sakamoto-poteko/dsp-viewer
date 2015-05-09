@@ -30,8 +30,18 @@
 class FFTScaleDraw : public QwtScaleDraw
 {
 public:
+    FFTScaleDraw() :
+        _sampleRate(0), _fftWindow(0)
+    {
+    }
+
     FFTScaleDraw(int sampleRate, int fftWindow);
-    virtual ~FFTScaleDraw();
+    
+    void setParameter(int sampleRate, int fftWindow)
+    {
+        _sampleRate = sampleRate;
+        _fftWindow = fftWindow;
+    }
 
     virtual QwtText label(double value) const;
 
