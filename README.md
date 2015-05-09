@@ -27,7 +27,7 @@ QMAKE_LIBDIR += D:\Projects\Tools\qwt-6.1.2\lib
 
 ### Windows
 In Qt shell, execute `qmake -spec win32-msvc2013 -tp vc -r`. This will generate `demo.sln`. Edit `viewer` project properties, 
-make sure OpenMP and Intel IPP support are enabled.
+make sure OpenMP and Intel IPP supports are enabled.
 
 ### Linux
 Currently there's no plan to add Linux support.
@@ -44,3 +44,27 @@ Intel Compiler on MacOS? Laugh my ass.
 ## Supporting Classes
 1. `shared_lpp_ptr`: `std::shared_ptr` for 64-bytes aligned memory blocks.
 2. `Wave`: RIFF wav file decoder class.
+
+## License
+<MIT>
+
+Copyright (c) 2015 Afa.L Cheng <afa@afa.moe>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
