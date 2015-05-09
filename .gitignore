@@ -6,3 +6,6 @@ release/
 *.sdf
 *.suo
 *.user
+*.vcxproj
+*.vcxproj.filters
+*.sln

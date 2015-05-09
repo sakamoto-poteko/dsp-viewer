@@ -9,9 +9,9 @@ it's just a "viewer" for convenience. However, DSP (calculation) library might b
 ### Prequisities
 Must have:
 
-1. Qt Library
-2. Qwt
-3. Intel IPP
+1. Intel IPP
+2. Qt Library
+3. Qwt
 
 Better with:
 
@@ -27,7 +27,7 @@ QMAKE_LIBDIR += D:\Projects\Tools\qwt-6.1.2\lib
 
 ### Windows
 In Qt shell, execute `qmake -spec win32-msvc2013 -tp vc -r`. This will generate `demo.sln`. Edit `viewer` project properties, 
-make sure you enabled OpenMP and Intel IPP support.
+make sure OpenMP and Intel IPP support are enabled.
 
 ### Linux
 Currently there's no plan to add Linux support.
@@ -42,5 +42,5 @@ Intel Compiler on MacOS? Laugh my ass.
 1. Frequency Spectrum (`class FFTSpectrumWidget`)
 
 ## Supporting Classes
-1. `shared_lpp_ptr`: std::shared_ptr for 64-bytes aligned memory blocks.
+1. `shared_lpp_ptr`: `std::shared_ptr` for 64-bytes aligned memory blocks.
 2. `Wave`: RIFF wav file decoder class.
