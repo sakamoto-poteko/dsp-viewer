@@ -54,7 +54,7 @@ void FFTCalculator::FFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ip
     ippsSqrt_32f_I(dst, _N / 2);
 }
 
-void FFTCalculator::Normalize(Ipp32f *src, size_t len)
+void FFTCalculator::Normalize(Ipp32f *src, int len)
 {
     Ipp32f min, max;
     ippsMinMax_32f(src, len, &min, &max);

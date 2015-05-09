@@ -35,7 +35,7 @@ public:
     TransposedMatrixRasterData() {}
     ~TransposedMatrixRasterData() {}
 
-    virtual void setValueMatrix(const T *values, size_t numRows, size_t numColumns)
+    virtual void setValueMatrix(const T *values, int numRows, int numColumns)
     {
         val = values;
         sampleNum = numColumns;
@@ -52,8 +52,8 @@ public:
 protected:
     const T *val = 0;
     size_t size = 0;
-    size_t sampleNum = 0;
-    size_t pointsPerSample = 0;
+    int sampleNum = 0;
+    int pointsPerSample = 0;
 };
 
 #endif // TRANSPOSEDMATRIXRASTERDATA_H

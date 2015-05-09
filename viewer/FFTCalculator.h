@@ -40,7 +40,7 @@ public:
 
     int getSizeFFTWorkBuf() { return sizeFFTWorkBuf; }
 
-    static void Normalize(Ipp32f *src, size_t len);
+    static void Normalize(Ipp32f *src, int len);
 
 protected:
     int _N;
