@@ -3,15 +3,12 @@
 #include <cmath>
 #include <cstring>
 
-FFTCalculator::FFTCalculator(int N)
+FFTCalculator::FFTCalculator(int N, std::function<void(const Ipp32f*, Ipp32f*, int)> windowFunc) :
+    _N(N), windowFunction(windowFunc)
 {
     const int order = (int)(log((double)N) / log(2.0));
-    _N = N;
 
-    pSrcIm = ippsMalloc_32f(N);
-    std::memset(pSrcIm, 0, N * sizeof(Ipp32f));
-    pDst = ippsMalloc_32f(N);
-    pDstIm = ippsMalloc_32f(N);
+    pDst = ippsMalloc_32f(N * 2);
 
     ippsFFTGetSize_C_32f(order, IPP_FFT_NODIV_BY_ANY,
         ippAlgHintAccurate, &sizeFFTSpec, &sizeFFTInitBuf, &sizeFFTWorkBuf);
@@ -32,23 +29,25 @@ FFTCalculator::~FFTCalculator()
     if (pFFTWorkBuf) ippFree(pFFTWorkBuf);
     if (pFFTSpecBuf) ippFree(pFFTSpecBuf);
 
-    ippFree(pSrcIm);
     ippFree(pDst);
-    ippFree(pDstIm);
 }
 
 // This function is non-reentrant
 void FFTCalculator::FFT(const Ipp32f *src, Ipp32f *dst)
 {
-    ippsFFTFwd_CToC_32f(src, pSrcIm, pDst, pDstIm, pFFTSpec, pFFTWorkBuf);
+    windowFunction(src, pDst, _N);
+    std::memset(pDst + _N, 0, _N * sizeof(Ipp32f));
+    ippsFFTFwd_CToC_32f_I(pDst, pDst + _N, pFFTSpec, pFFTWorkBuf);
 
-    ippsPowerSpectr_32f(pDst, pDstIm, dst, _N / 2);
+    ippsPowerSpectr_32f(pDst, pDst + _N, dst, _N / 2);
     ippsSqrt_32f_I(dst, _N / 2);
 }
 
 void FFTCalculator::FFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ipp8u *fftWorkBuf)
 {
-    ippsFFTFwd_CToC_32f(src, pSrcIm, dstWorkBuf, dstWorkBuf + _N, pFFTSpec, fftWorkBuf);
+    windowFunction(src, dstWorkBuf, _N);
+    std::memset(dstWorkBuf + _N, 0, _N * sizeof(Ipp32f));
+    ippsFFTFwd_CToC_32f_I(dstWorkBuf, dstWorkBuf + _N, pFFTSpec, fftWorkBuf);
 
     ippsPowerSpectr_32f(dstWorkBuf, dstWorkBuf + _N, dst, _N / 2);
     ippsSqrt_32f_I(dst, _N / 2);

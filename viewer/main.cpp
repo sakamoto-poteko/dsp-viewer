@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
     ippInit();
     //Set the size
-    const size_t N = 1024;  // 48kHz / 1024 = 46.88Hz, 48kHz * 1024 = 0.02s
+    const size_t N = 2048;  // 48kHz / 1024 = 23.44Hz, 48kHz * 2048 = 0.043s
 
     Wave wav = Wave::read("D:/patternRecog/yui3f32.wav");
     Ipp32f *channel1 = wav.channelData(0);

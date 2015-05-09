@@ -42,12 +42,10 @@ Intel Compiler on MacOS? Laugh my ass.
 1. Frequency Spectrum (`class FFTSpectrumWidget`)
 
 ## Supporting Classes
-1. `shared_lpp_ptr`: `std::shared_ptr` for 64-bytes aligned memory blocks.
+1. `shared_lpp_ptr`: `std::shared_ptr` for 64-byte aligned memory blocks.
 2. `Wave`: RIFF wav file decoder class.
 
 ## License
-<MIT>
-
 Copyright (c) 2015 Afa.L Cheng <afa@afa.moe>
 
 Permission is hereby granted, free of charge, to any person obtaining

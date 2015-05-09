@@ -25,12 +25,18 @@
 #ifndef FFTCALCULATOR_H
 #define FFTCALCULATOR_H
 
+#include <functional>
+
 #include <ipp.h>
 
 class FFTCalculator
 {
 public:
-    FFTCalculator(int N);
+    // Default window function is Hamming
+    FFTCalculator(int N, std::function<void(const Ipp32f*, Ipp32f*, int)> windowFunc = 
+        [](const Ipp32f *in, Ipp32f *out, int n) {
+            ippsWinHamming_32f(in, out, n);
+        });
     ~FFTCalculator();
 
     // src: size N, dst: size N / 2
@@ -38,7 +44,15 @@ public:
     // src: size N, dst: size N / 2, dstWorkBuf: size N * 2, fftWorkBuf: size sizeFFTWorkBuf
     void FFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ipp8u *fftWorkBuf);
 
-    int getSizeFFTWorkBuf() { return sizeFFTWorkBuf; }
+    int getSizeFFTWorkBuf() 
+    {
+        return sizeFFTWorkBuf; 
+    }
+
+    void setWindowFunction(std::function<void(const Ipp32f*, Ipp32f*, int)> windowFunc)
+    {
+        windowFunction = windowFunc;
+    }
 
     static void Normalize(Ipp32f *src, int len);
 
@@ -49,13 +63,13 @@ protected:
     Ipp8u *pFFTSpecBuf = 0;
     Ipp8u *pFFTInitBuf = 0;
     Ipp8u *pFFTWorkBuf = 0;
-    Ipp32f *pSrcIm = 0;
     Ipp32f *pDst = 0;
-    Ipp32f *pDstIm = 0;
 
     int sizeFFTSpec;
     int sizeFFTInitBuf;
     int sizeFFTWorkBuf;
+
+    std::function<void(const Ipp32f*, Ipp32f*, int)> windowFunction;
 };
 
 

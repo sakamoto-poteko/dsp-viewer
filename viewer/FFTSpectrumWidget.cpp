@@ -44,10 +44,13 @@ FFTSpectrumWidget::FFTSpectrumWidget(bool logColorScale, QWidget *parent) : QWid
     colorMap = new QwtLinearColorMap;
     if (logColorScale) {
         colorMap->addColorStop(0, Qt::black);
-        colorMap->addColorStop(1e-4, Qt::red);
-        colorMap->addColorStop(1e-3, Qt::yellow);
-        colorMap->addColorStop(1e-2, Qt::green);
-        colorMap->addColorStop(1e0, Qt::cyan);
+        colorMap->addColorStop(1e-6, Qt::darkBlue);
+        colorMap->addColorStop(1e-5, Qt::blue);
+        colorMap->addColorStop(1e-4, Qt::cyan);
+        colorMap->addColorStop(1e-3, Qt::green);
+        colorMap->addColorStop(1e-2, Qt::yellow);
+        colorMap->addColorStop(1e-1, Qt::magenta);
+        colorMap->addColorStop(1e0, Qt::red);
     } else {
         colorMap->addColorStop(0, Qt::black);
         colorMap->addColorStop(0.33, Qt::blue);
