@@ -26,7 +26,6 @@
 #include "wave.h"
 
 #include <QFile>
-#include <ipp.h>
 
 Wave::Wave()
 {

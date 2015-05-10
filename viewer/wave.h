@@ -26,7 +26,12 @@
 #ifndef WAVE_H
 #define WAVE_H
 
-#include <QVector>
+#include <vector>
+
+#include <QtGlobal>
+
+#include <ipp.h>
+
 
 class Wave
 {
