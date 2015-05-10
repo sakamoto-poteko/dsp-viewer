@@ -37,9 +37,31 @@ public:
         std::shared_ptr<T>(size ? (T *)_mm_malloc(size * sizeof(T), 64) : 0, 
         [](T *dPtr){
             if (dPtr) { _mm_free(dPtr); dPtr = 0; }
-        })
+        }), _size(size)
     {
     }
+
+    shared_Ipp_ptr(T *ptr, size_t size) :
+        std::shared_ptr<T>(ptr, [](T *dPtr){}), _size(size)
+    {
+    }
+
+    shared_Ipp_ptr clone()
+    {
+        shared_Ipp_ptr cloned = shared_Ipp_ptr(_size);
+        std::memcpy(cloned.get(), get(), _size * sizeof(T));
+        return cloned;
+    }
+
+    static shared_Ipp_ptr make_clone(T *ptr, size_t size)
+    {
+        shared_Ipp_ptr cloned(size);
+        std::memcpy(cloned.ptr, get(), size * sizeof(T));
+        return cloned;
+    }
+
+protected:
+    size_t _size;
 };
 
 

@@ -22,19 +22,10 @@
  *
  ***************************************************************************/
 
-
 #include <QApplication>
 #include <QLayout>
 #include <QWidget>
 #include <QVector>
-
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-#include <qwt_scale_engine.h>
-#include <qwt_plot_spectrogram.h>
-#include <qwt_matrix_raster_data.h>
-#include <qwt_color_map.h>
-#include <qwt_plot_zoomer.h>
 
 #include <ipp.h>
 #include <ippvm.h>
@@ -44,6 +35,8 @@
 #include "wave.h"
 #include "FFTCalculator.h"
 #include "FFTSpectrumWidget.h"
+#include "SRFilter.h"
+#include "WavePlotWidget.h"
 
 #ifdef NDEBUG
 #pragma comment(lib, "qwt")
@@ -55,52 +48,70 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
+    // Intel IPP
     ippInit();
-    //Set the size
+    // OpenMP
+    int numThreads = omp_get_max_threads();
+
+    // Read file
+    Wave wav = Wave::read("D:/parr/yui3f32.wav");
+    Ipp32f *sourceSamples = wav.data(0);
+
+    // High Pass Filter
+    shared_Ipp_ptr<Ipp32f> tap(2);
+    tap.get()[0] = 1.f; tap.get()[1] = -0.95f;
+    SRFilter filter(tap, 2);
+    Ipp32f *filteredSamples = ippsMalloc_32f(wav.numSamplesPerChannel());
+    filter.Filter(sourceSamples, filteredSamples, wav.numSamplesPerChannel());
+    
+    FFTSpectrumWidget *window = new FFTSpectrumWidget(true, "Filtered");
+
+    // FFT
+    // Window size
     const size_t N = 2048;  // 48kHz / 1024 = 23.44Hz, 48kHz * 2048 = 0.043s
-
-    Wave wav = Wave::read("D:/patternRecog/yui3f32.wav");
-    Ipp32f *channel1 = wav.channelData(0);
-
-    FFTSpectrumWidget *window = new FFTSpectrumWidget;
-
-    int fft_loop = wav.numSamplesPerChannel() - N;
-    shared_Ipp_ptr<Ipp32f> fftResult = shared_Ipp_ptr<Ipp32f>(N / 2 * fft_loop);
+    int fftIterations = wav.numSamplesPerChannel() - N;
+    // FFT result
+    shared_Ipp_ptr<Ipp32f> fftSpectrum = shared_Ipp_ptr<Ipp32f>(N / 2 * fftIterations);
 
     FFTCalculator calculator(N);
 
-    int numThreads = omp_get_max_threads();
+    // Allocate FFT buffers (for multithreaded version)
     std::vector<Ipp32f *> dstWorkBuf;
     std::vector<Ipp8u *> fftWorkBuf;
     std::vector<Ipp32f *> pSrc;
     for (int i = 0; i < numThreads; ++i) {
         pSrc.push_back(ippsMalloc_32f(N));
         dstWorkBuf.push_back(ippsMalloc_32f(N * 2));
-        fftWorkBuf.push_back(ippsMalloc_8u(calculator.getSizeFFTWorkBuf()));
+        fftWorkBuf.push_back(ippsMalloc_8u(calculator.getSizeWorkBuf()));
     }
 
-
+    // Perform FFT
 #pragma omp parallel for
-    for (int i = 0; i < fft_loop; ++i) {
+    for (int i = 0; i < fftIterations; ++i) {
         int threadIdx = omp_get_thread_num();
-        memcpy(pSrc.at(threadIdx), channel1 + i, N * sizeof(float));
+        memcpy(pSrc.at(threadIdx), filteredSamples + i, N * sizeof(float));
         calculator.FFT_r(pSrc.at(threadIdx), 
-                         fftResult.get() + (N / 2) * i, 
+                         fftSpectrum.get() + (N / 2) * i, 
                          dstWorkBuf.at(threadIdx), 
                          fftWorkBuf.at(threadIdx));
     }
 
-    FFTCalculator::Normalize(fftResult.get(), N / 2 * fft_loop);
-    window->setData(fftResult, fft_loop, N / 2, wav.sampleRate(), N);
+    // Normalize FFT result
+    FFTCalculator::Normalize(fftSpectrum.get(), N / 2 * fftIterations);
+    // Display FFT spectrum
+    window->setData(fftSpectrum.clone(), fftIterations, N / 2, wav.sampleRate(), N);
 
+
+
+    // Clean up
     for (auto workBufItem : dstWorkBuf)
         ippFree(workBufItem);
     for (auto fftWorkBufItem : fftWorkBuf)
         ippFree(fftWorkBufItem);
     for (auto pSrcItem : pSrc)
         ippFree(pSrcItem);
-
+    
+    // Show window
     window->showMaximized();
     return a.exec();
 }

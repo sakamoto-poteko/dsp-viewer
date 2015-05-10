@@ -22,49 +22,32 @@
  *
  ***************************************************************************/
 
+#include <ipp.h>
+#include "WavePlotWidget.h"
 
-#ifndef WAVE_H
-#define WAVE_H
 
-#include <QVector>
-
-class Wave
+WavePlotWidget::WavePlotWidget(const QString &title, const QPen &pen, QWidget *parent) : PlotBaseWidget(title, parent)
 {
-public:
-    Wave();
-    ~Wave();
+    plotCurve = new QwtPlotCurve;
+    plotCurve->setPen(pen);
+    plotCurve->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+    plotCurve->attach(plot);
+}
 
-    static Wave read(const QString &path);
+WavePlotWidget::~WavePlotWidget()
+{
+    plotCurve->setSamples(QVector<QPointF>());
+}
 
-    float *data(int channel)
-    {
-        return _data.at(channel);
+void WavePlotWidget::setData(const shared_Ipp_ptr<Ipp32f> &data, int dataLen, float x_min, float x_max)
+{
+    _xData = shared_Ipp_ptr<Ipp64f>(dataLen);
+    _yData = shared_Ipp_ptr<Ipp64f>(dataLen);
+    plotCurve->setRawSamples(_xData.get(), _yData.get(), dataLen);
+
+    float x_step = (x_max - x_min) / dataLen;
+    for (int i = 0; i < dataLen; ++i) {
+        _xData.get()[i] = i * x_step;
     }
-
-    int numChannels()           { return _num_channels; }
-    int bytesPerSample()        { return _bytesPerSample; }
-    int numSamplesPerChannel()  { return _samplesPerChannel; }
-    int sampleRate()            { return _sample_rate; }
-
-private:
-    qint32  _riff_tag;
-    qint32	_riff_length;
-    qint32	_wave_tag;
-    qint32	_fmt_tag;
-    qint32	_fmt_length;
-    qint16	_audio_format;
-    qint16	_num_channels;
-    qint32	_sample_rate;
-    qint32	_byte_rate;
-    qint16	_block_align;
-    qint16	_bits_per_sample;
-    qint32	_data_tag;
-    qint32	_data_length;
-
-    qint32  _samplesPerChannel;
-    qint32  _bytesPerSample;
-
-    std::vector<Ipp32f *> _data;
-};
-
-#endif // WAVE_H
+    ippsConvert_32f64f(data.get(), _yData.get(), dataLen);
+}

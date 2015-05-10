@@ -35,7 +35,8 @@ Wave::Wave()
 
 Wave::~Wave()
 {
-
+    for (auto ptr : _data)
+        ippFree(ptr);
 }
 
 
@@ -46,16 +47,16 @@ Wave Wave::read(const QString &path)
 
     Wave wav;
 
-    f.read((char *)&wav._riff_tag, 4);
-    f.read((char *)&wav._riff_length, 4);
-    f.read((char *)&wav._wave_tag, 4);
-    f.read((char *)&wav._fmt_tag, 4);
-    f.read((char *)&wav._fmt_length, 4);
-    f.read((char *)&wav._audio_format, 2);
-    f.read((char *)&wav._num_channels, 2);
-    f.read((char *)&wav._sample_rate, 4);
-    f.read((char *)&wav._byte_rate, 4);
-    f.read((char *)&wav._block_align, 2);
+    f.read((char *)&wav._riff_tag,      4);
+    f.read((char *)&wav._riff_length,   4);
+    f.read((char *)&wav._wave_tag,      4);
+    f.read((char *)&wav._fmt_tag,       4);
+    f.read((char *)&wav._fmt_length,    4);
+    f.read((char *)&wav._audio_format,  2);
+    f.read((char *)&wav._num_channels,  2);
+    f.read((char *)&wav._sample_rate,   4);
+    f.read((char *)&wav._byte_rate,     4);
+    f.read((char *)&wav._block_align,   2);
     f.read((char *)&wav._bits_per_sample, 2);
     qint16 cbSize;
     f.read((char *)&cbSize, 2);
@@ -72,15 +73,15 @@ Wave Wave::read(const QString &path)
 
     int bytes_per_sample = wav._bits_per_sample / 8;
     int samples = wav._data_length / wav._num_channels / bytes_per_sample;
-    wav._nSamplesPerChannel = samples;
+    wav._samplesPerChannel = samples;
     wav._bytesPerSample = bytes_per_sample;
 
     if (bytes_per_sample != 4)
         throw new std::exception("Must use an 32-bit float wave file");
 
     for (int i = 0; i < wav._num_channels; ++i) {
-        float *channel_data = (float *)ippMalloc(samples * sizeof(float));
-        wav._data.append(channel_data);
+        Ipp32f *channel_data = (Ipp32f *)ippsMalloc_32f(samples);
+        wav._data.push_back(channel_data);
         for (int j = 0; j < samples; ++j) {
             channel_data[j] = sampleData[(j * wav._num_channels + i)];
         }

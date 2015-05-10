@@ -23,48 +23,33 @@
  ***************************************************************************/
 
 
-#ifndef WAVE_H
-#define WAVE_H
+#ifndef WAVEPLOTWIDGET_H
+#define WAVEPLOTWIDGET_H
 
-#include <QVector>
+#include <QWidget>
+#include "PlotBaseWidget.h"
 
-class Wave
+#include <qwt_plot_curve.h>
+
+#include "shared_Ipp_ptr.h"
+
+class WavePlotWidget : public PlotBaseWidget
 {
+    Q_OBJECT
 public:
-    Wave();
-    ~Wave();
+    explicit WavePlotWidget(const QString &title = "", const QPen &pen = QPen(Qt::black), QWidget *parent = 0);
+    ~WavePlotWidget();
 
-    static Wave read(const QString &path);
+    void setData(const shared_Ipp_ptr<Ipp32f> &data, int dataLen, float x_min, float x_max);
+signals:
 
-    float *data(int channel)
-    {
-        return _data.at(channel);
-    }
+public slots:
 
-    int numChannels()           { return _num_channels; }
-    int bytesPerSample()        { return _bytesPerSample; }
-    int numSamplesPerChannel()  { return _samplesPerChannel; }
-    int sampleRate()            { return _sample_rate; }
+protected:
+    QwtPlotCurve *plotCurve;
 
-private:
-    qint32  _riff_tag;
-    qint32	_riff_length;
-    qint32	_wave_tag;
-    qint32	_fmt_tag;
-    qint32	_fmt_length;
-    qint16	_audio_format;
-    qint16	_num_channels;
-    qint32	_sample_rate;
-    qint32	_byte_rate;
-    qint16	_block_align;
-    qint16	_bits_per_sample;
-    qint32	_data_tag;
-    qint32	_data_length;
-
-    qint32  _samplesPerChannel;
-    qint32  _bytesPerSample;
-
-    std::vector<Ipp32f *> _data;
+    shared_Ipp_ptr<Ipp64f> _xData;
+    shared_Ipp_ptr<Ipp64f> _yData;
 };
 
-#endif // WAVE_H
+#endif // WAVEPLOTWIDGET_H

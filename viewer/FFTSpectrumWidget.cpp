@@ -25,13 +25,9 @@
 
 #include "FFTSpectrumWidget.h"
 
-FFTSpectrumWidget::FFTSpectrumWidget(bool logColorScale, QWidget *parent) : QWidget(parent)
+FFTSpectrumWidget::FFTSpectrumWidget(bool logColorScale, const QString &title, QWidget *parent) 
+    : PlotBaseWidget(title, parent)
 {
-    mainLayout = new QHBoxLayout;
-
-    // Plot
-    plot = new QwtPlot(this);
-
     // Plot Content
     spectrumPlot = new QwtPlotSpectrogram;
     spectrumPlot->setRenderHint(QwtPlotItem::RenderAntialiased, true);
@@ -43,57 +39,60 @@ FFTSpectrumWidget::FFTSpectrumWidget(bool logColorScale, QWidget *parent) : QWid
     // Color Map
     colorMap = new QwtLinearColorMap;
     if (logColorScale) {
-        colorMap->addColorStop(0, Qt::black);
-        colorMap->addColorStop(1e-6, Qt::darkBlue);
-        colorMap->addColorStop(1e-5, Qt::blue);
-        colorMap->addColorStop(1e-4, Qt::cyan);
-        colorMap->addColorStop(1e-3, Qt::green);
-        colorMap->addColorStop(1e-2, Qt::yellow);
-        colorMap->addColorStop(1e-1, Qt::magenta);
-        colorMap->addColorStop(1e0, Qt::red);
+        colorMap->addColorStop(0,     Qt::black);
+        colorMap->addColorStop(1e-11, QColor(0,   0,   255));
+        colorMap->addColorStop(1e-10, QColor(0,   127, 255));
+        colorMap->addColorStop(1e-9,  QColor(0,   255, 255));
+        colorMap->addColorStop(1e-8,  QColor(127, 0,   255));
+        colorMap->addColorStop(1e-7,  QColor(255, 0,   255));
+        colorMap->addColorStop(1e-6,  QColor(255, 0,   127));
+        colorMap->addColorStop(1e-5,  QColor(255, 0,   0));
+        colorMap->addColorStop(1e-4,  QColor(255, 127, 0));
+        colorMap->addColorStop(1e-3,  QColor(255, 255, 0));
+        colorMap->addColorStop(1e-2,  QColor(127, 255, 0));
+        colorMap->addColorStop(1e-1,  QColor(0,   255, 0));
+        colorMap->addColorStop(1e+0,  QColor(0,   255, 127));
     } else {
-        colorMap->addColorStop(0, Qt::black);
-        colorMap->addColorStop(0.33, Qt::blue);
-        colorMap->addColorStop(0.66, Qt::red);
-        colorMap->addColorStop(1, Qt::yellow);
+        colorMap->addColorStop(0.0, Qt::black);
+        colorMap->addColorStop(0.1, QColor(0,   0,   255));
+        colorMap->addColorStop(0.2, QColor(127, 0,   255));
+        colorMap->addColorStop(0.3, QColor(255, 0,   255));
+        colorMap->addColorStop(0.4, QColor(255, 0,   127));
+        colorMap->addColorStop(0.5, QColor(255, 0,   0));
+        colorMap->addColorStop(0.6, QColor(255, 127, 0));
+        colorMap->addColorStop(0.7, QColor(255, 255, 0));
+        colorMap->addColorStop(0.8, QColor(127, 255, 0));
+        colorMap->addColorStop(0.9, QColor(0,   255, 0));
+        colorMap->addColorStop(1.0, QColor(0,   255, 127));
     }
     colorMap->setMode(QwtLinearColorMap::ScaledColors);
     spectrumPlot->setColorMap(colorMap);
-    
+
     // Scale
     plotYAxisScale = new FFTScaleDraw;
     plot->setAxisScaleDraw(QwtPlot::yLeft, plotYAxisScale);
-
-    // Zoomer
-    plotZoomer = new QwtPlotZoomer(plot->canvas());
-    plotZoomer->setZoomBase();
-    plotZoomer->setRubberBandPen(QPen(Qt::white));
-    plotZoomer->setTrackerPen(QPen(Qt::white));
-
-    mainLayout->addWidget(plot);
-    setLayout(mainLayout);
 }
 
 FFTSpectrumWidget::~FFTSpectrumWidget()
 {
 }
 
-void FFTSpectrumWidget::setData(const shared_Ipp_ptr<Ipp32f> &data, int x, int y, int sampleRate, int fftWindow)
+void FFTSpectrumWidget::setData(const shared_Ipp_ptr<Ipp32f> &data, int x_len, int y_len, int sampleRate, int fftWindow)
 {
     _data = data;
 
     if (sampleRate) {
         plotYAxisScale->setParameter(sampleRate, fftWindow);
     }
-    spectrumPlotData->setValueMatrix(data.get(), y, x);
+    spectrumPlotData->setValueMatrix(data.get(), y_len, x_len);
 
-    spectrumPlotData->setInterval(Qt::XAxis, QwtInterval(0, x));
-    plot->setAxisScale(QwtPlot::xBottom, 0, x);
+    spectrumPlotData->setInterval(Qt::XAxis, QwtInterval(0, x_len));
+    plot->setAxisScale(QwtPlot::xBottom, 0, x_len);
 
-    spectrumPlotData->setInterval(Qt::YAxis, QwtInterval(0, y));
-    plot->setAxisScale(QwtPlot::yLeft, 0, y);
+    spectrumPlotData->setInterval(Qt::YAxis, QwtInterval(0, y_len));
+    plot->setAxisScale(QwtPlot::yLeft, 0, y_len);
 
-    spectrumPlotData->setInterval(Qt::ZAxis, QwtInterval(0, 100));
+    spectrumPlotData->setInterval(Qt::ZAxis, QwtInterval(0, 1));
     spectrumPlot->setData(spectrumPlotData);
 
     plotZoomer->setZoomBase();

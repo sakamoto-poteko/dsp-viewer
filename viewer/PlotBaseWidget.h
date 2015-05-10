@@ -23,48 +23,30 @@
  ***************************************************************************/
 
 
-#ifndef WAVE_H
-#define WAVE_H
+#ifndef PLOTBASEWIDGET_H
+#define PLOTBASEWIDGET_H
 
-#include <QVector>
+#include <QWidget>
+#include <QLayout>
 
-class Wave
+#include "qwt_plot.h"
+#include "qwt_plot_zoomer.h"
+
+class PlotBaseWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    Wave();
-    ~Wave();
+    explicit PlotBaseWidget(const QString &title = "", QWidget *parent = 0);
+    ~PlotBaseWidget();
 
-    static Wave read(const QString &path);
+signals:
 
-    float *data(int channel)
-    {
-        return _data.at(channel);
-    }
+public slots:
 
-    int numChannels()           { return _num_channels; }
-    int bytesPerSample()        { return _bytesPerSample; }
-    int numSamplesPerChannel()  { return _samplesPerChannel; }
-    int sampleRate()            { return _sample_rate; }
-
-private:
-    qint32  _riff_tag;
-    qint32	_riff_length;
-    qint32	_wave_tag;
-    qint32	_fmt_tag;
-    qint32	_fmt_length;
-    qint16	_audio_format;
-    qint16	_num_channels;
-    qint32	_sample_rate;
-    qint32	_byte_rate;
-    qint16	_block_align;
-    qint16	_bits_per_sample;
-    qint32	_data_tag;
-    qint32	_data_length;
-
-    qint32  _samplesPerChannel;
-    qint32  _bytesPerSample;
-
-    std::vector<Ipp32f *> _data;
+protected:
+    QLayout *mainLayout;
+    QwtPlot *plot;
+    QwtPlotZoomer *plotZoomer;
 };
 
-#endif // WAVE_H
+#endif // PLOTBASEWIDGET_H

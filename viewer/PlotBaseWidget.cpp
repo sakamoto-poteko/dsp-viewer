@@ -23,48 +23,32 @@
  ***************************************************************************/
 
 
-#ifndef WAVE_H
-#define WAVE_H
+#include "PlotBaseWidget.h"
 
-#include <QVector>
-
-class Wave
+PlotBaseWidget::PlotBaseWidget(const QString &title, QWidget *parent) : QWidget(parent)
 {
-public:
-    Wave();
-    ~Wave();
+    QPalette pal(palette());
+    pal.setColor(QPalette::Background, Qt::white);
+    setAutoFillBackground(true);
+    setPalette(pal);
 
-    static Wave read(const QString &path);
+    setWindowTitle(title);
+    mainLayout = new QHBoxLayout;
 
-    float *data(int channel)
-    {
-        return _data.at(channel);
-    }
+    // Plot
+    plot = new QwtPlot(this);
 
-    int numChannels()           { return _num_channels; }
-    int bytesPerSample()        { return _bytesPerSample; }
-    int numSamplesPerChannel()  { return _samplesPerChannel; }
-    int sampleRate()            { return _sample_rate; }
+    // Zoomer
+    plotZoomer = new QwtPlotZoomer(plot->canvas());
+    plotZoomer->setZoomBase();
+    plotZoomer->setRubberBandPen(QPen(Qt::white));
+    plotZoomer->setTrackerPen(QPen(Qt::white));
 
-private:
-    qint32  _riff_tag;
-    qint32	_riff_length;
-    qint32	_wave_tag;
-    qint32	_fmt_tag;
-    qint32	_fmt_length;
-    qint16	_audio_format;
-    qint16	_num_channels;
-    qint32	_sample_rate;
-    qint32	_byte_rate;
-    qint16	_block_align;
-    qint16	_bits_per_sample;
-    qint32	_data_tag;
-    qint32	_data_length;
+    mainLayout->addWidget(plot);
+    setLayout(mainLayout);
+}
 
-    qint32  _samplesPerChannel;
-    qint32  _bytesPerSample;
+PlotBaseWidget::~PlotBaseWidget()
+{
+}
 
-    std::vector<Ipp32f *> _data;
-};
-
-#endif // WAVE_H

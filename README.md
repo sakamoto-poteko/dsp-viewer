@@ -2,7 +2,7 @@
 Simple data processor & plotter. Developed on ad-hoc basis (i.e. fits only my need).
 
 __NOTE:__
-This project is not designed as a library. You are supposed to modify the code and run it directly. As it's name indicates, 
+This project is not designed as a library. You are supposed to modify the code and run it directly. As it's name indicates,
 it's just a "viewer" for convenience. However, DSP (calculation) library might be extracted as an independent lib in the future.
 
 ## How to build
@@ -26,26 +26,29 @@ QMAKE_LIBDIR += D:\Projects\Tools\qwt-6.1.2\lib
 ```
 
 ### Windows
-In Qt shell, execute `qmake -spec win32-msvc2013 -tp vc -r`. This will generate `demo.sln`. Edit `viewer` project properties, 
+In Qt shell, execute `qmake -spec win32-msvc2013 -tp vc -r`. This will generate `demo.sln`. Edit `viewer` project properties,
 make sure OpenMP and Intel IPP supports are enabled.
 
 ### Linux
-Currently there's no plan to add Linux support.
+Currently there's no plan to add Linux support. However it should be rather straightforward to port.
 
 ### MacOS
 Intel Compiler on MacOS? Laugh my ass.
 
 ## Supported Algorithms
 1. Fast Fourier Transform with 2^N sample points (`class FFTCalculator`)
+2. Single-Rate FIR Filter (`class SRFilter`)
 
 ## Supported Plots
 1. Frequency Spectrum (`class FFTSpectrumWidget`)
+2. Wave Plot (`class WavePlotWidget`)
 
 ## Supporting Classes
 1. `shared_lpp_ptr`: `std::shared_ptr` for 64-byte aligned memory blocks.
 2. `Wave`: RIFF wav file decoder class.
 
 ## License
+```
 Copyright (c) 2015 Afa.L Cheng <afa@afa.moe>
 
 Permission is hereby granted, free of charge, to any person obtaining
@@ -66,3 +69,4 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```

@@ -26,40 +26,36 @@
 #ifndef FFTSPECTRUMWIDGET_H
 #define FFTSPECTRUMWIDGET_H
 
-#include <QWidget>
 #include <QLayout>
+#include "PlotBaseWidget.h"
 
-#include <qwt_plot.h>
 #include <qwt_plot_spectrogram.h>
 #include <qwt_color_map.h>
-#include <qwt_plot_zoomer.h>
 
 #include "FFTScaleDraw.h"
 #include "TransposedMatrixRasterData.h"
 #include "shared_Ipp_ptr.h"
 
-class FFTSpectrumWidget : public QWidget
+class FFTSpectrumWidget : public PlotBaseWidget
 {
     Q_OBJECT
 public:
-    explicit FFTSpectrumWidget(bool logColorScale = true, QWidget *parent = 0);
+    explicit FFTSpectrumWidget(bool logColorScale = true, const QString &title = "", QWidget *parent = 0);
     ~FFTSpectrumWidget();
 
     // Usually, x is times performed fft, y is N / 2. Data size = x * y
-    void setData(const shared_Ipp_ptr<Ipp32f> &data, int x, int y, int sampleRate = 0, int fftWindow = 0);
+    void setData(const shared_Ipp_ptr<Ipp32f> &data, int x_len, int y_len, int sampleRate = 0, int fftWindow = 0);
 
 signals:
 
 public slots:
 
 protected:
-    QwtPlot *plot;
     QwtPlotSpectrogram *spectrumPlot;
     QwtLinearColorMap *colorMap;
     TransposedMatrixRasterData<float> *spectrumPlotData;
     FFTScaleDraw *plotYAxisScale;
-    QLayout *mainLayout;
-    QwtPlotZoomer *plotZoomer;
+
 
     shared_Ipp_ptr<Ipp32f> _data;
 };
