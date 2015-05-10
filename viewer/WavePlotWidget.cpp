@@ -50,4 +50,5 @@ void WavePlotWidget::setData(const shared_Ipp_ptr<Ipp32f> &data, int dataLen, fl
         _xData.get()[i] = i * x_step;
     }
     ippsConvert_32f64f(data.get(), _yData.get(), dataLen);
+    resetZoom();
 }

@@ -22,6 +22,7 @@
  *
  ***************************************************************************/
 
+#include <qwt_scale_engine.h>
 
 #include "PlotBaseWidget.h"
 
@@ -40,9 +41,7 @@ PlotBaseWidget::PlotBaseWidget(const QString &title, QWidget *parent) : QWidget(
 
     // Zoomer
     plotZoomer = new QwtPlotZoomer(plot->canvas());
-    plotZoomer->setZoomBase();
-    plotZoomer->setRubberBandPen(QPen(Qt::white));
-    plotZoomer->setTrackerPen(QPen(Qt::white));
+    resetZoom();
 
     mainLayout->addWidget(plot);
     setLayout(mainLayout);
@@ -52,3 +51,18 @@ PlotBaseWidget::~PlotBaseWidget()
 {
 }
 
+
+void PlotBaseWidget::useLogScale(int axisId)
+{
+    plot->setAxisScaleEngine(axisId, new QwtLogScaleEngine);
+}
+
+void PlotBaseWidget::useLinearScale(int axisId)
+{
+    plot->setAxisScaleEngine(axisId, new QwtLinearScaleEngine);
+}
+
+void PlotBaseWidget::useCustomScale(int axisId, QwtScaleEngine *scaleEngine)
+{
+    plot->setAxisScaleEngine(axisId, scaleEngine);
+}

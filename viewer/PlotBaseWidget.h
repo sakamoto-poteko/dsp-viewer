@@ -39,6 +39,10 @@ public:
     explicit PlotBaseWidget(const QString &title = "", QWidget *parent = 0);
     ~PlotBaseWidget();
 
+
+    virtual void useLogScale(int axisId);
+    virtual void useLinearScale(int axisId);
+    virtual void useCustomScale(int axisId, QwtScaleEngine *scaleEngine);
 signals:
 
 public slots:
@@ -47,6 +51,11 @@ protected:
     QLayout *mainLayout;
     QwtPlot *plot;
     QwtPlotZoomer *plotZoomer;
+
+    void resetZoom()
+    {
+        plotZoomer->setZoomBase();
+    }
 };
 
 #endif // PLOTBASEWIDGET_H

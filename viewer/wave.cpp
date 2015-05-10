@@ -43,6 +43,8 @@ Wave Wave::read(const QString &path)
 {
     QFile f(path);
     f.open(QIODevice::ReadOnly);
+    if (!f.isOpen())
+        throw new std::exception("Cannot open file");
 
     Wave wav;
 

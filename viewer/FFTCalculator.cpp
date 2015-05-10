@@ -39,8 +39,18 @@ void FFTCalculator::FFT(const Ipp32f *src, Ipp32f *dst)
     std::memset(pDst + _N, 0, _N * sizeof(Ipp32f));
     ippsFFTFwd_CToC_32f_I(pDst, pDst + _N, pFFTSpec, pFFTWorkBuf);
 
-    ippsPowerSpectr_32f(pDst, pDst + _N, dst, _N / 2);
-    ippsSqrt_32f_I(dst, _N / 2);
+    ippsMagnitude_32f(pDst, pDst + _N, dst, _N / 2);
+}
+
+// This function is non-reentrant
+void FFTCalculator::InvFFT(const Ipp32f *src, Ipp32f *dst)
+{
+    std::memcpy(pDst, src, _N * sizeof(Ipp32f));
+    std::memset(pDst + _N, 0, _N * sizeof(Ipp32f));
+    ippsFFTInv_CToC_32f_I(pDst, pDst + _N, pFFTSpec, pFFTWorkBuf);
+
+    // Copies only real part
+    std::memcpy(dst, pDst, _N * sizeof(Ipp32f));
 }
 
 void FFTCalculator::FFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ipp8u *fftWorkBuf)
@@ -49,8 +59,17 @@ void FFTCalculator::FFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ip
     std::memset(dstWorkBuf + _N, 0, _N * sizeof(Ipp32f));
     ippsFFTFwd_CToC_32f_I(dstWorkBuf, dstWorkBuf + _N, pFFTSpec, fftWorkBuf);
 
-    ippsPowerSpectr_32f(dstWorkBuf, dstWorkBuf + _N, dst, _N / 2);
-    ippsSqrt_32f_I(dst, _N / 2);
+    ippsMagnitude_32f(dstWorkBuf, dstWorkBuf + _N, dst, _N / 2);
+}
+
+void FFTCalculator::InvFFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ipp8u *fftWorkBuf)
+{
+    std::memcpy(dstWorkBuf, src, _N);
+    std::memset(dstWorkBuf + _N, 0, _N * sizeof(Ipp32f));
+    ippsFFTInv_CToC_32f_I(dstWorkBuf, dstWorkBuf + _N, pFFTSpec, fftWorkBuf);
+
+    // Copies only real part
+    std::memcpy(dst, dstWorkBuf, _N * sizeof(Ipp32f));
 }
 
 void FFTCalculator::Normalize(Ipp32f *src, int len)

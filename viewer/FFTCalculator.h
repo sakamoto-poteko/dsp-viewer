@@ -41,8 +41,12 @@ public:
 
     // src: size N, dst: size N / 2
     void FFT(const Ipp32f *src, Ipp32f *dst);
-    // src: size N, dst: size N / 2, dstWorkBuf: size N * 2, fftWorkBuf: size sizeFFTWorkBuf
+    // src: size N, dst: size N
+    void InvFFT(const Ipp32f *src, Ipp32f *dst);
+    // src: size N, dst: size N / 2, dstWorkBuf: size N * 2, fftWorkBuf: size getSizeWorkBuf()
     void FFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ipp8u *fftWorkBuf);
+    // src: size N, dst: size N, dstWorkBuf: size N * 2, fftWorkBuf: size getSizeWorkBuf()
+    void InvFFT_r(const Ipp32f *src, Ipp32f *dst, Ipp32f *dstWorkBuf, Ipp8u *fftWorkBuf);
 
     int getSizeWorkBuf() 
     {

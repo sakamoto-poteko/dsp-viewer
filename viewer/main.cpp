@@ -101,6 +101,23 @@ int main(int argc, char *argv[])
     // Display FFT spectrum
     window->setData(fftSpectrum.clone(), fftIterations, N / 2, wav.sampleRate(), N);
 
+    WavePlotWidget *singleSpec = new WavePlotWidget("Plot");
+    singleSpec->setData(shared_Ipp_ptr<Ipp32f>(fftSpectrum.get() + 26245 * (N / 2), N / 2).clone(), N / 2, 0, N / 2 * wav.sampleRate() / N);
+    singleSpec->useLogScale(QwtPlot::yLeft);
+    singleSpec->showMaximized();
+
+    /*
+    WavePlotWidget *invfft = new WavePlotWidget("Inverse");
+    FFTCalculator invFFTCalc(N / 2);
+    Ipp32f *srcVec = ippsMalloc_32f(N / 2);
+    ippsLog10_32f_A24(fftSpectrum.get() + 26245, srcVec, N / 2);
+    //memcpy(srcVec, fftSpectrum.get() + 26245, N / 2);
+    shared_Ipp_ptr<Ipp32f> dstVec(N / 2);
+    invFFTCalc.InvFFT(srcVec, dstVec.get());
+    invfft->setData(dstVec, N / 2, 0, N / 2 * wav.sampleRate() / N);
+    //invfft->useLogScale(QwtPlot::xBottom);
+    invfft->showMaximized();
+    */
 
 
     // Clean up

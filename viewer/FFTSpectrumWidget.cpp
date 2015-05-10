@@ -68,6 +68,10 @@ FFTSpectrumWidget::FFTSpectrumWidget(bool logColorScale, const QString &title, Q
     colorMap->setMode(QwtLinearColorMap::ScaledColors);
     spectrumPlot->setColorMap(colorMap);
 
+    // Zoomer pen color
+    plotZoomer->setRubberBandPen(QPen(Qt::white));
+    plotZoomer->setTrackerPen(QPen(Qt::white));
+
     // Scale
     plotYAxisScale = new FFTScaleDraw;
     plot->setAxisScaleDraw(QwtPlot::yLeft, plotYAxisScale);
@@ -95,5 +99,5 @@ void FFTSpectrumWidget::setData(const shared_Ipp_ptr<Ipp32f> &data, int x_len, i
     spectrumPlotData->setInterval(Qt::ZAxis, QwtInterval(0, 1));
     spectrumPlot->setData(spectrumPlotData);
 
-    plotZoomer->setZoomBase();
+    resetZoom();
 }

@@ -36,7 +36,7 @@ Currently there's no plan to add Linux support. However it should be rather stra
 Intel Compiler on MacOS? Laugh my ass.
 
 ## Supported Algorithms
-1. Fast Fourier Transform with 2^N sample points (`class FFTCalculator`)
+1. Forward and inverse Fast Fourier Transform with 2^N sample points (`class FFTCalculator`)
 2. Single-Rate FIR Filter (`class SRFilter`)
 
 ## Supported Plots
@@ -44,7 +44,7 @@ Intel Compiler on MacOS? Laugh my ass.
 2. Wave Plot (`class WavePlotWidget`)
 
 ## Supporting Classes
-1. `shared_lpp_ptr`: `std::shared_ptr` for 64-byte aligned memory blocks.
+1. `shared_lpp_ptr`: `std::shared_ptr` for 64-byte aligned memory blocks or raw pointers passed in.
 2. `Wave`: RIFF wav file decoder class.
 
 ## License
