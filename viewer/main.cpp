@@ -26,7 +26,7 @@
 #include <QLayout>
 #include <QWidget>
 #include <QVector>
-
+#include <QFile>
 #include <ipp.h>
 #include <ippvm.h>
 
@@ -62,18 +62,22 @@ int main(int argc, char *argv[])
     tap.get()[0] = 1.f; tap.get()[1] = -0.95f;
     SRFilter filter(tap, 2);
     Ipp32f *filteredSamples = ippsMalloc_32f(wav.numSamplesPerChannel());
-    filter.Filter(sourceSamples, filteredSamples, wav.numSamplesPerChannel());
+    //filter.Filter(sourceSamples, filteredSamples, wav.numSamplesPerChannel());
+    memcpy(filteredSamples, sourceSamples, wav.numSamplesPerChannel() * 4);
     
-    FFTSpectrumWidget *window = new FFTSpectrumWidget(true, "Filtered");
+    FFTSpectrumWidget *window = new FFTSpectrumWidget(true, "High Pass FFT");
 
     // FFT
     // Window size
-    const size_t N = 2048;  // 48kHz / 1024 = 23.44Hz, 48kHz * 2048 = 0.043s
+    const size_t N = 2048;  // 48kHz / 2048 = 23.44Hz, 48kHz * 2048 = 0.043s
     int fftIterations = wav.numSamplesPerChannel() - N;
     // FFT result
     shared_Ipp_ptr<Ipp32f> fftSpectrum = shared_Ipp_ptr<Ipp32f>(N / 2 * fftIterations);
 
-    FFTCalculator calculator(N);
+    FFTCalculator calculator(N, [](const Ipp32f *in, Ipp32f *out, int n){
+        ippsWinHann_32f(in, out, n);
+    });
+    //FFTCalculator calculator(N);
 
     // Allocate FFT buffers (for multithreaded version)
     std::vector<Ipp32f *> dstWorkBuf;
@@ -85,7 +89,6 @@ int main(int argc, char *argv[])
         fftWorkBuf.push_back(ippsMalloc_8u(calculator.getSizeWorkBuf()));
     }
 
-    // Perform FFT
 #pragma omp parallel for
     for (int i = 0; i < fftIterations; ++i) {
         int threadIdx = omp_get_thread_num();
@@ -101,10 +104,28 @@ int main(int argc, char *argv[])
     // Display FFT spectrum
     window->setData(fftSpectrum.clone(), fftIterations, N / 2, wav.sampleRate(), N);
 
-    WavePlotWidget *singleSpec = new WavePlotWidget("Plot");
-    singleSpec->setData(shared_Ipp_ptr<Ipp32f>(fftSpectrum.get() + 26245 * (N / 2), N / 2).clone(), N / 2, 0, N / 2 * wav.sampleRate() / N);
-    singleSpec->useLogScale(QwtPlot::yLeft);
-    singleSpec->showMaximized();
+    int sampleIdx = 26245;     // 307427
+    int sampleIdx2 = 21000;
+
+    if (sampleIdx) {
+        QFile file("Z:/specyui.txt");
+        file.open(QIODevice::WriteOnly);
+        for (int i = 0; i < N / 2; ++i) {
+            file.write(QString("%1 ").arg(fftSpectrum.get()[26245 * (N / 2) + i]).toUtf8());
+        }
+        file.close();
+        WavePlotWidget *singleSpec = new WavePlotWidget("Plot");
+        singleSpec->setData(shared_Ipp_ptr<Ipp32f>(fftSpectrum.get() + sampleIdx * (N / 2), N / 2).clone(), N / 2, 0, N / 2 * wav.sampleRate() / N);
+        singleSpec->useLogScale(QwtPlot::yLeft);
+        singleSpec->showMaximized();
+    }
+
+    if (sampleIdx2) {
+        WavePlotWidget *singleSpec2 = new WavePlotWidget("Plot2");
+        singleSpec2->setData(shared_Ipp_ptr<Ipp32f>(fftSpectrum.get() + sampleIdx2 * (N / 2), N / 2).clone(), N / 2, 0, N / 2 * wav.sampleRate() / N);
+        singleSpec2->useLogScale(QwtPlot::yLeft);
+        singleSpec2->showMaximized();
+    }
 
     /*
     WavePlotWidget *invfft = new WavePlotWidget("Inverse");

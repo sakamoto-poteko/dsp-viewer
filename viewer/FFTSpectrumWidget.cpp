@@ -40,18 +40,17 @@ FFTSpectrumWidget::FFTSpectrumWidget(bool logColorScale, const QString &title, Q
     colorMap = new QwtLinearColorMap;
     if (logColorScale) {
         colorMap->addColorStop(0,     Qt::black);
-        colorMap->addColorStop(1e-11, QColor(0,   0,   255));
-        colorMap->addColorStop(1e-10, QColor(0,   127, 255));
-        colorMap->addColorStop(1e-9,  QColor(0,   255, 255));
-        colorMap->addColorStop(1e-8,  QColor(127, 0,   255));
-        colorMap->addColorStop(1e-7,  QColor(255, 0,   255));
-        colorMap->addColorStop(1e-6,  QColor(255, 0,   127));
-        colorMap->addColorStop(1e-5,  QColor(255, 0,   0));
-        colorMap->addColorStop(1e-4,  QColor(255, 127, 0));
-        colorMap->addColorStop(1e-3,  QColor(255, 255, 0));
-        colorMap->addColorStop(1e-2,  QColor(127, 255, 0));
-        colorMap->addColorStop(1e-1,  QColor(0,   255, 0));
-        colorMap->addColorStop(1e+0,  QColor(0,   255, 127));
+        colorMap->addColorStop(1e-10, QColor(0,   0,   255));
+        colorMap->addColorStop(1e-9, QColor(0,   127, 255));
+        colorMap->addColorStop(1e-8,  QColor(0,   255, 255));
+        colorMap->addColorStop(1e-7,  QColor(127, 0,   255));
+        colorMap->addColorStop(1e-6,  QColor(255, 0,   255));
+        colorMap->addColorStop(1e-5,  QColor(255, 0,   127));
+        colorMap->addColorStop(1e-4,  QColor(255, 0,   0));
+        colorMap->addColorStop(1e-3,  QColor(255, 127, 0));
+        colorMap->addColorStop(1e-2,  QColor(255, 255, 0));
+        colorMap->addColorStop(1e-1,  QColor(0,   255, 127));
+        colorMap->addColorStop(1e+0,  QColor(255, 255, 255));
     } else {
         colorMap->addColorStop(0.0, Qt::black);
         colorMap->addColorStop(0.1, QColor(0,   0,   255));
