@@ -32,8 +32,8 @@ make sure OpenMP and Intel IPP supports are enabled.
 ### Linux
 Currently there's no plan to add Linux support. However it should be rather straightforward to port.
 
-### MacOS
-Intel Compiler on MacOS? Laugh my ass.
+### Mac OS X
+Intel Compiler on OSX? Laugh my ass.
 
 ## Supported Algorithms
 1. Forward and inverse Fast Fourier Transform with 2^N sample points (`class FFTCalculator`)
